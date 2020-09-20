@@ -12,7 +12,7 @@ module.exports = {
       options: {
         apiURL: 'http://strapi.jiailing.com',
         queryLimit: 1000, // Defaults to 100
-        contentTypes: ['post', 'tag'], // StrapiPost
+        contentTypes: ['project', 'tag'], // StrapiPost
         // typeName: 'Strapi,
         singleTypes: ['vblog'],
         // Possibility to login with a Strapi user,
