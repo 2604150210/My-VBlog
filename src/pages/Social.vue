@@ -3,11 +3,11 @@
   <div>
     <el-card shadow="never" style="min-height: 400px;margin-bottom: 20px;padding: 0px 0px 20px 0px">
       <el-tabs v-model="activeTab" type="card" @tab-click="onSelect">
-        <el-tab-pane :label="'粉丝 '+followersTotal" name="followers" style="padding: 5px">
-          <div v-loading="followers.loading">
-            <div v-if="followers.list.length">
+        <el-tab-pane :label="'粉丝 '+ followers.length" name="followers" style="padding: 5px">
+          <div>
+            <div v-if="followers.length">
               <el-row style="min-height: 200px; ">
-                <el-col :span="8" v-for="(item,index) in followers.list" :key="'followers'+index" style="padding: 10px">
+                <el-col :span="8" v-for="({node: item},index) in followers" :key="'followers'+index" style="padding: 10px">
                   <el-card shadow="hover" style="font-size: 13px;color: #606266;line-height: 20px">
                     <i class="el-icon-star-off"></i>&emsp;
                     <a @click="$router.push(`/user/social/details/${item.name}`)" style=" text-decoration:none;cursor:pointer">{{item.name}}</a>
@@ -20,8 +20,6 @@
                 </el-col>
               </el-row>
               <div style="text-align: center;margin-top: 10px">
-                <el-pagination @current-change="onSelect" background layout="prev, pager, next" :current-page.sync="followers.query.page" :page-size="followers.query.pageSize" :total="followers.query.pageNumber*followers.query.pageSize">
-                </el-pagination>
               </div>
             </div>
             <div style="min-height: 300px;margin-bottom: 20px;padding: 20px 0px 20px 0px;text-align: center" v-else>
@@ -31,11 +29,11 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane :label="'关注 '+followingTotal" name="following" style="padding: 5px">
-          <div v-loading="following.loading">
-            <div v-if="following.list.length">
+        <el-tab-pane :label="'关注 '+ followings.length" name="following" style="padding: 5px">
+          <div>
+            <div v-if="followings.length">
               <el-row style="min-height: 200px; ">
-                <el-col :span="8" v-for="(item,index) in following.list" :key="'following'+index" style="padding: 10px">
+                <el-col :span="8" v-for="({node: item},index) in followings" :key="'following'+index" style="padding: 10px">
                   <el-card shadow="hover" style="font-size: 13px;color: #606266;line-height: 20px">
                     <i class="el-icon-star-off"></i>&emsp;
                     <a @click="$router.push(`/user/social/details/${item.name}`)" style=" text-decoration:none;cursor:pointer">{{item.name}}</a>
@@ -48,8 +46,7 @@
                 </el-col>
               </el-row>
               <div style="text-align: center;margin-top: 10px">
-                <el-pagination @current-change="onSelect" background layout="prev, pager, next" :current-page.sync="following.query.page" :page-size="following.query.pageSize" :total="following.query.pageNumber*following.query.pageSize">
-                </el-pagination>
+                
               </div>
             </div>
             <div style="min-height: 300px;margin-bottom: 20px;padding: 20px 0px 20px 0px;text-align: center" v-else>
@@ -65,84 +62,50 @@
 </Layout>
 </template>
 
+<page-query>
+query {
+  followers: allStrapiFollowers{
+    edges{
+      node{
+        name
+        avatarUrl
+        htmlUrl
+      }
+    }
+  },
+  followings: allStrapiFollowings{
+    edges{
+      node{
+        name
+        avatarUrl
+        htmlUrl
+      }
+    }
+  }
+}
+</page-query>
+
 <script>
+import axios from 'axios'
+
 export default {
   data() {
     return {
       activeTab: "followers",
-      followers: {
-        query: {
-          page: 1,
-          pageSize: 9,
-          pageNumber: 1
-        },
-        loading: false,
-        list: []
-      },
-      following: {
-        query: {
-          page: 1,
-          pageSize: 9,
-          pageNumber: 1
-        },
-        loading: false,
-        list: []
-      }
     }
   },
-  mounted() {
-    this.onSelect()
-
+  computed: {
+    followers () {
+      return this.$page.followers.edges
+    },
+    followings () {
+      return this.$page.followings.edges
+    }
   },
   methods: {
-    onSelect() {
-      switch (this.activeTab) {
-        case "followers":
-          this.listFollowers()
-          break
-        case "following":
-          this.listFollowing()
-          break
-        default:
-          break
-      }
-    },
-    listFollowers() {
-      this.followers.loading = true
-      UserApi.followers(this.followers.query).then((response) => {
-        let result = response.data
-        let pageNumber = this.$util.parseHeaders(response.headers)
-        if (pageNumber) {
-          this.followers.query.pageNumber = pageNumber
-        }
-        this.followers.list = []
-        for (let i = 0; i < result.length; i++) {
-          let data = {}
-          data.name = result[i]['login']
-          data.avatarUrl = result[i]['avatar_url']
-          data.htmlUrl = result[i]['html_url']
-          this.followers.list.push(data)
-        }
-      }).then(() => this.followers.loading = false)
-    },
-    listFollowing() {
-      this.following.loading = true
-      UserApi.following(this.following.query).then((response) => {
-        let result = response.data
-        let pageNumber = this.$util.parseHeaders(response.headers)
-        if (pageNumber) {
-          this.following.query.pageNumber = pageNumber
-        }
-        this.following.list = []
-        for (let i = 0; i < result.length; i++) {
-          let data = {}
-          data.name = result[i]['login']
-          data.avatarUrl = result[i]['avatar_url']
-          data.htmlUrl = result[i]['html_url']
-          this.following.list.push(data)
-        }
-      }).then(() => this.following.loading = false)
-    },
+    onSelect () {
+      console.log('onSelect')
+    }
   }
 }
 </script>
