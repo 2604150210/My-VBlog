@@ -10,7 +10,7 @@
                 <el-col :span="8" v-for="({node: item},index) in followers" :key="'followers'+index" style="padding: 10px">
                   <el-card shadow="hover" style="font-size: 13px;color: #606266;line-height: 20px">
                     <i class="el-icon-star-off"></i>&emsp;
-                    <a @click="$router.push(`/user/social/details/${item.name}`)" style=" text-decoration:none;cursor:pointer">{{item.name}}</a>
+                    <span style=" text-decoration:none;cursor:pointer">{{item.name}}</span>
                     <br>
                     <i class="el-icon-message"></i>&emsp;
                     <a :href="item.htmlUrl" target="_blank" style=" text-decoration:none;cursor:pointer">TA的主页</a>
@@ -36,7 +36,7 @@
                 <el-col :span="8" v-for="({node: item},index) in followings" :key="'following'+index" style="padding: 10px">
                   <el-card shadow="hover" style="font-size: 13px;color: #606266;line-height: 20px">
                     <i class="el-icon-star-off"></i>&emsp;
-                    <a @click="$router.push(`/user/social/details/${item.name}`)" style=" text-decoration:none;cursor:pointer">{{item.name}}</a>
+                    <span style=" text-decoration:none;cursor:pointer">{{item.name}}</span>
                     <br>
                     <i class="el-icon-message"></i>&emsp;
                     <a :href="item.htmlUrl" target="_blank" style=" text-decoration:none;cursor:pointer">TA的主页</a>

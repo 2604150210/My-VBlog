@@ -1,30 +1,23 @@
 <template>
 <Layout>
-  <div style="min-height: 600px" v-loading="loading">
+  <div style="min-height: 600px">
     <el-card shadow="never" style="margin-bottom: 20px">
       <el-input placeholder="请输入关键字" v-model="searchKey" clearable style="width: 300px"></el-input>
-      <el-button @click="search" icon="el-icon-search" style="margin-left: 10px" circle plain></el-button>
-      <el-button @click="$share()" style="margin-left: 10px" icon="el-icon-share" type="warning" plain circle></el-button>
-      <el-button type="primary" icon="el-icon-edit" round plain style="float: right;" @click="goAdd">写博文</el-button>
+      <el-button icon="el-icon-search" style="margin-left: 10px" circle plain></el-button>
+      <el-button style="margin-left: 10px" icon="el-icon-share" type="warning" plain circle></el-button>
+      <el-button type="primary" icon="el-icon-edit" round plain style="float: right;" >写博文</el-button>
     </el-card>
 
     <div v-if="blogs&&blogs.length>0">
-      <el-card shadow="hover" v-for="(item,index) in blogs" :key="'p'+index" style="margin-bottom: 20px" v-if="!item.hide">
+      <el-card shadow="hover" v-for="({node: item},index) in blogs" :key="'p'+index" style="margin-bottom: 20px" v-if="!item.hide">
         <div slot="header">
           <el-row>
             <el-col :span="16">
               <span>
-                <a style="text-decoration:none;cursor:pointer" @click="goDetails(item.id)">
+                <a style="text-decoration:none;cursor:pointer">
                   <i class="el-icon-edit-outline"></i>&nbsp;&nbsp; {{item.title}}
                 </a>
               </span>
-            </el-col>
-            <el-col :span="8">
-              <div style="text-align: right;">
-                <el-button @click="$share('/user/blog/details/'+item.id)" style="padding: 3px 0" type="text" icon="el-icon-share"></el-button>
-                <el-button @click="editBlog(index)" style="padding: 3px 0" type="text" icon="el-icon-edit" v-if="token"></el-button>
-                <el-button @click="deleteBlog(index)" style="padding: 3px 0" type="text" icon="el-icon-delete" v-if="token"></el-button>
-              </div>
             </el-col>
           </el-row>
         </div>
@@ -36,8 +29,6 @@
         </div>
       </el-card>
       <div style="text-align: center">
-        <el-pagination @current-change="list" background layout="prev, pager, next" :current-page.sync="query.page" :page-size="query.pageSize" :total="query.pageNumber*query.pageSize">
-        </el-pagination>
       </div>
 
     </div>
@@ -50,10 +41,45 @@
   </div>
 </Layout>
 </template>
-
+<page-query>
+query {
+  blog: allStrapiBlog{
+    edges{
+      node{
+        id
+        title
+        content
+        description
+        created_at
+        updated_at
+      }
+    }
+  }
+}
+</page-query>
 <script>
 export default {
+  data () {
+    return {
+      searchKey: ''
+    }
+  },
+  methods: {
+    search () {
 
+    },
+    goAdd () {
+
+    },
+    token () {
+
+    }
+  },
+  computed: {
+    blogs() {
+      return this.$page.blog.edges
+    }
+  }
 }
 </script>
 
